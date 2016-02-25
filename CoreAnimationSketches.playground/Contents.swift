@@ -1,10 +1,11 @@
-import XCPlayground
-import UIKit
 //:
 //: ## CoreAnimation Sketches
 //:
 //: Explore framework classes on a single stage.
 //:
+import XCPlayground
+import UIKit
+
 let stage = UIView(frame: CGRect(origin: CGPointZero, size: CGSize(width: 1100, height: 300)))
 stage.backgroundColor = UIColor.lightGrayColor()
 XCPlaygroundPage.currentPage.liveView = stage

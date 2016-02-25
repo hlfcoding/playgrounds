@@ -1,9 +1,10 @@
-import CoreGraphics
 //:
 //: ## CoreGraphics Sketches
 //:
 //: Explore various `CoreGraphics` methods and concepts, especially around transforms.
 //:
+import CoreGraphics
+
 var frame: CGRect { return CGRect(origin: CGPointZero, size: CGSize(width: 10.0, height: 10.0)) }
 //:
 //: Using `CGAffineTransformMake` to get an identity transform. With the last one being canonical.
