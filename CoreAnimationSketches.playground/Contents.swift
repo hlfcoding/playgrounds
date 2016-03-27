@@ -6,6 +6,7 @@
 import XCPlayground
 import UIKit
 
+let gutter: CGFloat = 20.0
 let stage = UIView(frame: CGRect(origin: CGPointZero, size: CGSize(width: 1100, height: 300)))
 stage.backgroundColor = UIColor.lightGrayColor()
 XCPlaygroundPage.currentPage.liveView = stage
@@ -14,12 +15,13 @@ XCPlaygroundPage.currentPage.liveView = stage
 //:
 //: A tour of base `CALayer` properties. Some layout boilerplate involved.
 //:
-let button = UIButton(frame: CGRect(origin: CGPoint(x: 20.0, y: 10.0), size: CGSizeZero))
+let button = UIButton(frame: CGRect(origin: CGPoint(x: gutter, y: gutter), size: CGSizeZero))
 button.setTitle("OK", forState: .Normal)
 button.sizeToFit()
-button.frame.insetInPlace(dx: -10.0, dy: 0.0)
+let padding: CGFloat = 10.0
+button.frame.insetInPlace(dx: -padding, dy: 0.0)
+button.frame.offsetInPlace(dx: padding, dy: 0.0)
 stage.addSubview(button)
-XCPlaygroundPage.currentPage.captureValue(button.frame, withIdentifier: "Simple Button: frame")
 
 button.setTitleColor(UIColor.darkTextColor(), forState: .Normal)
 button.layer.backgroundColor = color(.White)
