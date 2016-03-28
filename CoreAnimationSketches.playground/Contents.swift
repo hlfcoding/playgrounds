@@ -89,3 +89,81 @@ let indicator = ActivityIndicator(frame: CGRect(
     size: CGSize(width: 100, height: 30)
 ))
 stage.addSubview(indicator)
+//:
+//: ### View with 'Masked' Transition
+//:
+class MaskTransitionView: View {
+    
+    class ContentView: View {
+        var label: UILabel!
+
+        override func setUp() {
+            label = UILabel(frame: CGRectZero)
+            label.text = "Content"
+            label.sizeToFit()
+            addSubview(label)
+        }
+
+        override func layoutSubviews() {
+            label.center = center
+        }
+    }
+
+    var interstitialView: ContentView!
+    var originalView: ContentView!
+    var interstitialBackgroundView: UIView!
+
+    override func setUp() {
+        clipsToBounds = true
+        backgroundColor = Color.Gray.asUIColor()
+
+        originalView = ContentView(frame: bounds)
+        originalView.backgroundColor = Color.White.asUIColor()
+        addSubview(originalView)
+
+        interstitialBackgroundView = UIView(frame: bounds)
+        interstitialBackgroundView.bounds.size.height = 0
+        interstitialBackgroundView.backgroundColor = Color.Gray.asUIColor()
+        originalView.insertSubview(interstitialBackgroundView, belowSubview: originalView.label)
+
+        interstitialView = ContentView(frame: bounds)
+        interstitialView.backgroundColor = originalView.label.textColor
+        interstitialView.label.textColor = originalView.backgroundColor
+        insertSubview(interstitialView, belowSubview: originalView)
+
+        let mask = CALayer()
+        mask.backgroundColor = Color.White.asCGColor()
+        mask.frame = bounds;
+        mask.position = CGPoint(x: bounds.width / 2, y: bounds.height / 2)
+        originalView.layer.mask = mask
+    }
+
+    override func layoutSubviews() {
+
+    }
+
+    func performMaskTransition() {
+        UIView.animateWithDuration(
+            0.5, delay: 0, options: [.CurveEaseInOut],
+            animations: { self.interstitialBackgroundView.frame = self.bounds }
+        ) { (finished) in
+            UIView.animateWithDuration(
+                0.5, delay: 0, options: [.CurveEaseInOut],
+                animations: {
+                    guard let mask = self.originalView.layer.mask else { return }
+                    var position = mask.position
+                    position.y += self.originalView.frame.size.height
+                    mask.position = position
+                }, completion: nil
+            )
+        }
+    }
+
+}
+
+let transitionView = MaskTransitionView(frame: CGRect(
+    origin: CGPoint(x: indicator.frame.maxX + gutter, y: gutter),
+    size: CGSize(width: 100, height: 100)
+))
+stage.addSubview(transitionView)
+transitionView.performMaskTransition()
