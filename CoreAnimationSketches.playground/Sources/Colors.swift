@@ -1,18 +1,25 @@
 import UIKit
 
 public enum Color {
-    case White, Black, Blue
-}
+    case White, Black, Gray, Blue
 
-public func color(color: Color, withAlpha alpha: Double = 1.0) -> CGColor {
-    var result: UIColor
-    switch color {
-    case .White: result = UIColor.whiteColor()
-    case .Black: result = UIColor.blackColor()
-    case .Blue: result = UIColor(red: 0.0, green: 0.29, blue: 0.71, alpha: 1.0)
+    public func asUIColorWithAlpha(alpha: Double?) -> UIColor {
+        var result: UIColor
+        switch self {
+        case .White: result = UIColor.whiteColor()
+        case .Black: result = UIColor.blackColor()
+        case .Gray: result = UIColor.grayColor()
+        case .Blue: result = UIColor(red: 0.0, green: 0.29, blue: 0.71, alpha: 1.0)
+        }
+        if let alpha = alpha {
+            result = result.colorWithAlphaComponent(CGFloat(alpha))
+        }
+        return result
     }
-    if alpha < 1.0 {
-        result = result.colorWithAlphaComponent(CGFloat(alpha))
+    public func asUIColor() -> UIColor { return self.asUIColorWithAlpha(1.0) }
+
+    public func asCGColorWithAlpha(alpha: Double) -> CGColor {
+        return self.asUIColorWithAlpha(alpha).CGColor
     }
-    return result.CGColor
+    public func asCGColor() -> CGColor { return self.asCGColorWithAlpha(1.0) }
 }

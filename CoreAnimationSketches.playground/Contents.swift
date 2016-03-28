@@ -23,13 +23,13 @@ button.frame.insetInPlace(dx: -padding, dy: 0.0)
 button.frame.offsetInPlace(dx: padding, dy: 0.0)
 stage.addSubview(button)
 
-button.setTitleColor(UIColor(CGColor: color(.Black)), forState: .Normal)
-button.setTitleColor(UIColor(CGColor: color(.Blue)), forState: .Highlighted)
-button.layer.backgroundColor = color(.White)
-button.layer.borderColor = color(.Black, withAlpha: 0.4)
+button.setTitleColor(Color.Black.asUIColor(), forState: .Normal)
+button.setTitleColor(Color.Blue.asUIColor(), forState: .Highlighted)
+button.layer.backgroundColor = Color.White.asCGColor()
+button.layer.borderColor = Color.Black.asCGColorWithAlpha(0.4)
 button.layer.borderWidth = 1.0
 button.layer.cornerRadius = 5.0
-button.layer.shadowColor = color(.Black)
+button.layer.shadowColor = Color.Black.asCGColor()
 button.layer.shadowOffset = CGSizeZero
 button.layer.shadowOpacity = 0.3
 button.layer.shadowRadius = 1.0
@@ -42,7 +42,7 @@ class ActivityIndicator: UIView {
 
     var cycleDuration: NSTimeInterval = 1.0
     var dotCount = 3
-    var fillColor = UIColor.grayColor()
+    var fillColor = Color.Gray.asUIColor()
     var gutterRatio: CGFloat = 0.2
     var toAlpha: CGFloat = 0.5
 
