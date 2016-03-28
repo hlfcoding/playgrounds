@@ -23,7 +23,8 @@ button.frame.insetInPlace(dx: -padding, dy: 0.0)
 button.frame.offsetInPlace(dx: padding, dy: 0.0)
 stage.addSubview(button)
 
-button.setTitleColor(UIColor.darkTextColor(), forState: .Normal)
+button.setTitleColor(UIColor(CGColor: color(.Black)), forState: .Normal)
+button.setTitleColor(UIColor(CGColor: color(.Blue)), forState: .Highlighted)
 button.layer.backgroundColor = color(.White)
 button.layer.borderColor = color(.Black, withAlpha: 0.4)
 button.layer.borderWidth = 1.0
