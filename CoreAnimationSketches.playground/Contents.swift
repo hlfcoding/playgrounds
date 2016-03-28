@@ -6,7 +6,7 @@
 import XCPlayground
 import UIKit
 
-let gutter: CGFloat = 20.0
+let gutter: CGFloat = 20
 let stage = UIView(frame: CGRect(origin: CGPointZero, size: CGSize(width: 1100, height: 300)))
 stage.backgroundColor = UIColor.lightGrayColor()
 XCPlaygroundPage.currentPage.liveView = stage
@@ -18,38 +18,38 @@ XCPlaygroundPage.currentPage.liveView = stage
 let button = UIButton(frame: CGRect(origin: CGPoint(x: gutter, y: gutter), size: CGSizeZero))
 button.setTitle("OK", forState: .Normal)
 button.sizeToFit()
-let padding: CGFloat = 10.0
-button.frame.insetInPlace(dx: -padding, dy: 0.0)
-button.frame.offsetInPlace(dx: padding, dy: 0.0)
+let padding: CGFloat = 10
+button.frame.insetInPlace(dx: -padding, dy: 0)
+button.frame.offsetInPlace(dx: padding, dy: 0)
 stage.addSubview(button)
 
 button.setTitleColor(Color.Black.asUIColor(), forState: .Normal)
 button.setTitleColor(Color.Blue.asUIColor(), forState: .Highlighted)
 button.layer.backgroundColor = Color.White.asCGColor()
 button.layer.borderColor = Color.Black.asCGColorWithAlpha(0.4)
-button.layer.borderWidth = 1.0
-button.layer.cornerRadius = 5.0
+button.layer.borderWidth = 1
+button.layer.cornerRadius = 5
 button.layer.shadowColor = Color.Black.asCGColor()
 button.layer.shadowOffset = CGSizeZero
 button.layer.shadowOpacity = 0.3
-button.layer.shadowRadius = 1.0
+button.layer.shadowRadius = 1
 //:
 //: ### Animated Activity Indicator
 //:
 //: A tour of base `CABasicAnimation` and `CAShapeLayer` properties. Some layout boilerplate involved.
 //:
-class ActivityIndicator: UIView {
+class ActivityIndicator: View {
 
-    var cycleDuration: NSTimeInterval = 1.0
+    var cycleDuration: NSTimeInterval = 1
     var dotCount = 3
     var fillColor = Color.Gray.asUIColor()
     var gutterRatio: CGFloat = 0.2
     var toAlpha: CGFloat = 0.5
 
     var blockSize: CGFloat { return floor(frame.width / CGFloat(dotCount)) }
-    var dotSize: CGFloat { return floor(blockSize * (1.0 - gutterRatio)) }
-    var duration: NSTimeInterval { return cycleDuration / 2.0 }
-    var gutterSize: CGFloat { return (blockSize - dotSize) / 2.0 }
+    var dotSize: CGFloat { return floor(blockSize * (1 - gutterRatio)) }
+    var duration: NSTimeInterval { return cycleDuration / 2 }
+    var gutterSize: CGFloat { return (blockSize - dotSize) / 2 }
     var stagger: NSTimeInterval { return cycleDuration / Double(dotCount) }
 
     var animations = [CAAnimation]()
@@ -79,7 +79,7 @@ class ActivityIndicator: UIView {
         animation.autoreverses = true
         animation.beginTime = Double(index + 1) * stagger;
         animation.duration = duration
-        animation.fromValue = NSNumber(float: 1.0)
+        animation.fromValue = NSNumber(float: 1)
         animation.repeatCount = Float.infinity
         animation.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseInEaseOut)
         animation.toValue = NSNumber(float: Float(toAlpha))
@@ -89,6 +89,6 @@ class ActivityIndicator: UIView {
 
 let indicator = ActivityIndicator(frame: CGRect(
     origin: CGPoint(x: button.frame.maxX + gutter, y: gutter),
-    size: CGSize(width: 100.0, height: 30.0)
+    size: CGSize(width: 100, height: 30)
 ))
 stage.addSubview(indicator)
