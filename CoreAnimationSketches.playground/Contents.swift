@@ -54,10 +54,7 @@ class ActivityIndicator: View {
 
     var animations = [CAAnimation]()
 
-    override init(frame: CGRect) { super.init(frame: frame); setUp() }
-    required init?(coder aDecoder: NSCoder) { super.init(coder: aDecoder); setUp() }
-
-    func setUp() {
+    override func setUp() {
         for i in 0..<dotCount {
             layer.addSublayer(createDotAtIndex(i))
         }
