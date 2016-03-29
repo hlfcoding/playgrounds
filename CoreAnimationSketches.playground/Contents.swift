@@ -96,11 +96,15 @@ class MaskTransitionView: View {
     
     class ContentView: View {
         var label: UILabel!
+        var text: String = "" {
+            didSet {
+                label.text = text
+                label.sizeToFit()
+            }
+        }
 
         override func setUp() {
             label = UILabel(frame: CGRectZero)
-            label.text = "Content"
-            label.sizeToFit()
             addSubview(label)
         }
 
@@ -115,25 +119,25 @@ class MaskTransitionView: View {
 
     override func setUp() {
         clipsToBounds = true
-        backgroundColor = Color.Gray.asUIColor()
+        layer.cornerRadius = 5
 
         originalView = ContentView(frame: bounds)
         originalView.backgroundColor = Color.White.asUIColor()
+        originalView.text = "WHITE"
         addSubview(originalView)
 
         interstitialBackgroundView = UIView(frame: bounds)
-        interstitialBackgroundView.bounds.size.height = 0
         interstitialBackgroundView.backgroundColor = Color.Gray.asUIColor()
         originalView.insertSubview(interstitialBackgroundView, belowSubview: originalView.label)
 
         interstitialView = ContentView(frame: bounds)
         interstitialView.backgroundColor = originalView.label.textColor
+        interstitialView.text = "BLACK"
         interstitialView.label.textColor = originalView.backgroundColor
         insertSubview(interstitialView, belowSubview: originalView)
 
         let mask = CALayer()
         mask.backgroundColor = Color.White.asCGColor()
-        mask.position = CGPoint(x: bounds.width / 2, y: bounds.height / 2)
         mask.frame = bounds
         originalView.layer.mask = mask
     }
@@ -143,20 +147,28 @@ class MaskTransitionView: View {
     }
 
     func performMaskTransition() {
+        guard let mask = originalView.layer.mask else { return }
+
+        interstitialBackgroundView.frame.size.height = 0
         interstitialBackgroundView.frame.origin.y = 0
+        CATransaction.begin()
+        CATransaction.setAnimationDuration(0)
+        mask.position = originalView.center
+        CATransaction.commit()
+
         UIView.animateWithDuration(
             0.5, delay: 0, options: [.CurveEaseInOut],
-            animations: { self.interstitialBackgroundView.frame = self.bounds }
+            animations: {
+                self.interstitialBackgroundView.frame = self.bounds
+            }
         ) { (finished) in
-            UIView.animateWithDuration(
-                0.5, delay: 0, options: [.CurveEaseInOut],
-                animations: {
-                    guard let mask = self.originalView.layer.mask else { return }
-                    var position = mask.position
-                    position.y += self.originalView.frame.size.height
-                    mask.position = position
-                }, completion: nil
+            CATransaction.begin()
+            CATransaction.setAnimationDuration(0.5)
+            CATransaction.setAnimationTimingFunction(
+                CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseInEaseOut)
             )
+            mask.position.y += self.originalView.frame.size.height
+            CATransaction.commit()
         }
     }
 
