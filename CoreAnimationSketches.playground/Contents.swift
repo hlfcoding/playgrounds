@@ -74,7 +74,7 @@ class ActivityIndicator: View {
     func createDotAnimationAtIndex(index: Int) -> CABasicAnimation {
         let animation = CABasicAnimation(keyPath: "opacity")
         animation.autoreverses = true
-        animation.beginTime = Double(index + 1) * stagger;
+        animation.beginTime = Double(index + 1) * stagger
         animation.duration = duration
         animation.fromValue = NSNumber(float: 1)
         animation.repeatCount = Float.infinity
@@ -133,8 +133,8 @@ class MaskTransitionView: View {
 
         let mask = CALayer()
         mask.backgroundColor = Color.White.asCGColor()
-        mask.frame = bounds;
         mask.position = CGPoint(x: bounds.width / 2, y: bounds.height / 2)
+        mask.frame = bounds
         originalView.layer.mask = mask
     }
 
@@ -143,6 +143,7 @@ class MaskTransitionView: View {
     }
 
     func performMaskTransition() {
+        interstitialBackgroundView.frame.origin.y = 0
         UIView.animateWithDuration(
             0.5, delay: 0, options: [.CurveEaseInOut],
             animations: { self.interstitialBackgroundView.frame = self.bounds }
