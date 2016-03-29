@@ -90,7 +90,10 @@ let indicator = ActivityIndicator(frame: CGRect(
 ))
 stage.addSubview(indicator)
 //:
-//: ### View with 'Masked' Transition
+//: ### View with 'Mask' Transition
+//:
+//: A tour of `CALayer` masks and using `CATransaction` alongside `UIView` animation. Some layout and gesture
+//: boilerplate involved.
 //:
 class MaskTransitionView: View {
     
@@ -115,6 +118,7 @@ class MaskTransitionView: View {
 
     var interstitialView: ContentView!
     var originalView: ContentView!
+    // A supplemental part of the transition.
     var interstitialBackgroundView: UIView!
 
     var tapRecognizer: UITapGestureRecognizer!
