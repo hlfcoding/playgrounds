@@ -117,6 +117,8 @@ class MaskTransitionView: View {
     var originalView: ContentView!
     var interstitialBackgroundView: UIView!
 
+    var tapRecognizer: UITapGestureRecognizer!
+
     override func setUp() {
         clipsToBounds = true
         layer.cornerRadius = 5
@@ -140,21 +142,34 @@ class MaskTransitionView: View {
         mask.backgroundColor = Color.White.asCGColor()
         mask.frame = bounds
         originalView.layer.mask = mask
+
+        prepareMaskTransition()
+
+        tapRecognizer = UITapGestureRecognizer(
+            target: self, action: #selector(MaskTransitionView.performMaskTransition(_:))
+        )
+        addGestureRecognizer(tapRecognizer)
     }
 
-    override func layoutSubviews() {
-
+    deinit {
+        removeGestureRecognizer(tapRecognizer)
     }
 
-    func performMaskTransition() {
-        guard let mask = originalView.layer.mask else { return }
-
+    func prepareMaskTransition() {
         interstitialBackgroundView.frame.size.height = 0
         interstitialBackgroundView.frame.origin.y = 0
+
+        guard let mask = originalView.layer.mask else { return }
         CATransaction.begin()
         CATransaction.setAnimationDuration(0)
         mask.position = originalView.center
         CATransaction.commit()
+    }
+
+    @IBAction func performMaskTransition(sender: AnyObject? = nil) {
+        guard let mask = originalView.layer.mask else { return }
+
+        prepareMaskTransition()
 
         UIView.animateWithDuration(
             0.5, delay: 0, options: [.CurveEaseInOut],
@@ -179,4 +194,3 @@ let transitionView = MaskTransitionView(frame: CGRect(
     size: CGSize(width: 100, height: 100)
 ))
 stage.addSubview(transitionView)
-transitionView.performMaskTransition()
