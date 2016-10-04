@@ -11,7 +11,7 @@ import Foundation
 //:
 let list = [1, 2, 3]
 let bridgedList = list as NSArray
-bridgedList.indexOfObject(2)
+bridgedList.index(of: 2)
 //:
 //: Swift Arrays are assigned by value, so use NSArray instead for assign by reference.
 //:
@@ -22,7 +22,7 @@ assert(mutableList.count == 3)
 
 var mutableBridgedList = NSMutableArray(array: bridgedList)
 var reliable = mutableBridgedList
-reliable.addObject(4)
+reliable.add(4)
 assert(mutableBridgedList.count == 4)
 //:
 //: ### II. CoreGraphics
@@ -32,8 +32,10 @@ import CoreGraphics
 //: CGFloats must be explicitly typed, else they become Doubles.
 //:
 let num = 0.0
-assert(num is Double)
+type(of: num)
 let otherNum: CGFloat = 0.0
+type(of: otherNum)
+
 //:
 //: ---
 //: ## Swift 2
@@ -42,12 +44,12 @@ let otherNum: CGFloat = 0.0
 //:
 //: Guards test the true condition, unlike traditional 'if' guards.
 //:
-func doSomethingWithInput(someInput: AnyObject?) -> NSArray? {
-    guard let someInput = someInput else { return nil }
-    return [ someInput ]
+func doSomething(input: Any?) -> [String]? {
+    guard let input = input as? String else { return nil }
+    return [ input ]
 }
-assert(doSomethingWithInput(nil) == nil)
-assert(doSomethingWithInput("input") == ["input"])
+assert(doSomething(input: nil) == nil)
+assert(doSomething(input: "input")! == ["input"])
 //:
 //: ### II. Optional Pattern
 //:
