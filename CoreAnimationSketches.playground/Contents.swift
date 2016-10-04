@@ -3,34 +3,33 @@
 //:
 //: Explore framework classes on a single stage.
 //:
-import XCPlayground
+import PlaygroundSupport
 import UIKit
 
 let gutter: CGFloat = 20
-let stage = UIView(frame: CGRect(origin: CGPointZero, size: CGSize(width: 1100, height: 300)))
-stage.backgroundColor = UIColor.lightGrayColor()
-XCPlaygroundPage.currentPage.liveView = stage
+let stage = UIView(frame: CGRect(origin: .zero, size: CGSize(width: 1100, height: 300)))
+stage.backgroundColor = UIColor.lightGray
+PlaygroundPage.current.liveView = stage
 //:
 //: ### Simple Button
 //:
 //: A tour of base `CALayer` properties. Some layout boilerplate involved.
 //:
-let button = UIButton(frame: CGRect(origin: CGPoint(x: gutter, y: gutter), size: CGSizeZero))
-button.setTitle("OK", forState: .Normal)
+let button = UIButton(frame: CGRect(origin: CGPoint(x: gutter, y: gutter), size: .zero))
+button.setTitle("OK", for: .normal)
 button.sizeToFit()
 let padding: CGFloat = 10
-button.frame.insetInPlace(dx: -padding, dy: 0)
-button.frame.offsetInPlace(dx: padding, dy: 0)
+button.frame = button.frame.insetBy(dx: -padding, dy: 0).offsetBy(dx: padding, dy: 0)
 stage.addSubview(button)
 
-button.setTitleColor(Color.Black.asUIColor(), forState: .Normal)
-button.setTitleColor(Color.Blue.asUIColor(), forState: .Highlighted)
-button.layer.backgroundColor = Color.White.asCGColor()
-button.layer.borderColor = Color.Black.asCGColorWithAlpha(0.4)
+button.setTitleColor(Color.black.asUIColor(), for: .normal)
+button.setTitleColor(Color.blue.asUIColor(), for: .highlighted)
+button.layer.backgroundColor = Color.white.asCGColor()
+button.layer.borderColor = Color.black.asCGColor(alpha: 0.4)
 button.layer.borderWidth = 1
 button.layer.cornerRadius = 5
-button.layer.shadowColor = Color.Black.asCGColor()
-button.layer.shadowOffset = CGSizeZero
+button.layer.shadowColor = Color.black.asCGColor()
+button.layer.shadowOffset = .zero
 button.layer.shadowOpacity = 0.3
 button.layer.shadowRadius = 1
 //:
@@ -40,46 +39,46 @@ button.layer.shadowRadius = 1
 //:
 class ActivityIndicator: View {
 
-    var cycleDuration: NSTimeInterval = 1
+    var cycleDuration: TimeInterval = 1
     var dotCount = 3
-    var fillColor = Color.Gray.asUIColor()
+    var fillColor = Color.gray.asUIColor()
     var gutterRatio: CGFloat = 0.2
     var toAlpha: CGFloat = 0.5
 
     var blockSize: CGFloat { return floor(frame.width / CGFloat(dotCount)) }
     var dotSize: CGFloat { return floor(blockSize * (1 - gutterRatio)) }
-    var duration: NSTimeInterval { return cycleDuration / 2 }
+    var duration: TimeInterval { return cycleDuration / 2 }
     var gutterSize: CGFloat { return (blockSize - dotSize) / 2 }
-    var stagger: NSTimeInterval { return cycleDuration / Double(dotCount) }
+    var stagger: TimeInterval { return cycleDuration / Double(dotCount) }
 
     var animations = [CAAnimation]()
 
     override func setUp() {
         for i in 0..<dotCount {
-            layer.addSublayer(createDotAtIndex(i))
+            layer.addSublayer(createDot(at: i))
         }
     }
 
-    func createDotAtIndex(index: Int) -> CAShapeLayer {
+    func createDot(at index: Int) -> CAShapeLayer {
         let dot = CAShapeLayer()
-        dot.fillColor = fillColor.CGColor
+        dot.fillColor = fillColor.cgColor
         let containingRect = CGRect(x: blockSize * CGFloat(index), y: gutterSize, width: dotSize, height: dotSize)
-        dot.path = UIBezierPath(ovalInRect: containingRect).CGPath
-        let animation = createDotAnimationAtIndex(index)
-        dot.addAnimation(animation, forKey: "opacity")
+        dot.path = UIBezierPath(ovalIn: containingRect).cgPath
+        let animation = createDotAnimation(at: index)
+        dot.add(animation, forKey: "opacity")
         animations.append(animation)
         return dot
     }
 
-    func createDotAnimationAtIndex(index: Int) -> CABasicAnimation {
+    func createDotAnimation(at index: Int) -> CABasicAnimation {
         let animation = CABasicAnimation(keyPath: "opacity")
         animation.autoreverses = true
         animation.beginTime = Double(index + 1) * stagger
         animation.duration = duration
-        animation.fromValue = NSNumber(float: 1)
+        animation.fromValue = NSNumber(value: 1)
         animation.repeatCount = Float.infinity
         animation.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseInEaseOut)
-        animation.toValue = NSNumber(float: Float(toAlpha))
+        animation.toValue = NSNumber(value: Float(toAlpha))
         return animation
     }
 }
@@ -107,7 +106,7 @@ class MaskTransitionView: View {
         }
 
         override func setUp() {
-            label = UILabel(frame: CGRectZero)
+            label = UILabel(frame: .zero)
             addSubview(label)
         }
 
@@ -128,12 +127,12 @@ class MaskTransitionView: View {
         layer.cornerRadius = 5
 
         originalView = ContentView(frame: bounds)
-        originalView.backgroundColor = Color.White.asUIColor()
+        originalView.backgroundColor = Color.white.asUIColor()
         originalView.text = "WHITE"
         addSubview(originalView)
 
         interstitialBackgroundView = UIView(frame: bounds)
-        interstitialBackgroundView.backgroundColor = Color.Gray.asUIColor()
+        interstitialBackgroundView.backgroundColor = Color.gray.asUIColor()
         originalView.insertSubview(interstitialBackgroundView, belowSubview: originalView.label)
 
         interstitialView = ContentView(frame: bounds)
@@ -143,7 +142,7 @@ class MaskTransitionView: View {
         insertSubview(interstitialView, belowSubview: originalView)
 
         let mask = CALayer()
-        mask.backgroundColor = Color.White.asCGColor()
+        mask.backgroundColor = Color.white.asCGColor()
         mask.frame = bounds
         originalView.layer.mask = mask
 
@@ -170,13 +169,13 @@ class MaskTransitionView: View {
         CATransaction.commit()
     }
 
-    @IBAction func performMaskTransition(sender: AnyObject? = nil) {
+    @IBAction func performMaskTransition(_ sender: AnyObject? = nil) {
         guard let mask = originalView.layer.mask else { return }
 
         prepareMaskTransition()
 
-        UIView.animateWithDuration(
-            0.5, delay: 0, options: [.CurveEaseInOut],
+        UIView.animate(
+            withDuration: 0.5, delay: 0, options: .curveEaseInOut,
             animations: {
                 self.interstitialBackgroundView.frame = self.bounds
             }
