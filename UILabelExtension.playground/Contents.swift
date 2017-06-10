@@ -24,10 +24,6 @@ extension UILabel {
         return round(ems * font.pointSize)
     }
 
-    func hlf_refreshAttributesText() {
-        // TODO
-    }
-
     func hlf_setKerning(_ points: CGFloat) {
         guard let text = text else { return assertionFailure() }
         var attributes = hlf_attributesFromProperties()
@@ -45,6 +41,15 @@ extension UILabel {
         attributedText = NSAttributedString(string: text, attributes: attributes)
     }
 
+    func hlf_updateText(_ text: String) {
+        guard attributedText != nil else {
+            self.text = text
+            return
+        }
+        let attributes = hlf_attributesFromProperties()
+        attributedText = NSAttributedString(string: text, attributes: attributes)
+    }
+
 }
 
 let label = UILabel()
@@ -53,12 +58,12 @@ label.font = .preferredFont(forTextStyle: .title1)
 label.numberOfLines = 0
 label.textAlignment = .center
 label.textColor = .darkText
-label.text = "Hello, playground. You are looking okay."
+label.hlf_updateText("Hello, playground. You are looking okay.")
 
 if isExtensionEnabled {
-    label.text = "Hello, playground. You are looking good."
     label.hlf_setKerning(-0.5)
     label.hlf_setLineHeight(label.hlf_pointsByEms(1.1))
+    label.hlf_updateText("Hello, playground. You are looking good.")
 }
 
 let width = label.hlf_pointsByEms(9)
