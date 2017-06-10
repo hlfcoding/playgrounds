@@ -58,3 +58,11 @@ assert(doSomething(input: "input")! == ["input"])
 for case let number? in ([1, 2, nil] as [Int?]) where number > 1 {
     assert(number == 2)
 }
+//:
+//: ### III. Named Tuple Elements
+//:
+//: Micro data-structures.
+//:
+let tuple: (foo: String, bar: String)!
+tuple = ("foo", "bar")
+assert(tuple.foo == "foo")
