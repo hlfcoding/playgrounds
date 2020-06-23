@@ -17,3 +17,8 @@ public let fiveStarAssaultEpicFlatSubstatVitalPercent = Rune(
     statType: .assault, valueType: .percent, value: 0.4036,
     bonusOption: Rune.BonusOption(statType: .vital, valueType: .flat, value: 192)
 ).validate()
+
+public let fiveStarShieldLegendSubstatFatal = Rune(
+    statType: .shield, valueType: .percent, value: 0.2962,
+    bonusOption: Rune.BonusOption(statType: .fatal, valueType: .percent, value: 0.064)
+).validate()

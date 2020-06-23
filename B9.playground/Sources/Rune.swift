@@ -50,6 +50,15 @@ public struct Rune: RuneLike {
         return (Int(value), newBaseValue)
     }
 
+    public static func valueToAdd(
+        from allRunes: [Rune], of statType: StatType, to baseValue: Double
+    ) -> Double {
+        let runeLikes = self.runeLikes(from: allRunes, of: statType)
+        var value: Double = 0
+        value += runeLikes.filter { $0.valueType == .percent }.reduce(0) { $0 + $1.value }
+        return value
+    }
+
     static func runeLikes(from allRunes: [Rune], of statType: StatType) -> [RuneLike] {
         var runeLikes = [RuneLike]()
         runeLikes += allRunes.filter { $0.statType == statType } as [RuneLike]
