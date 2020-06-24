@@ -1,24 +1,28 @@
 import Foundation
 
-public let sixStarVitalEpic = Rune(
-    statType: .vital, valueType: .percent, value: 0.5136, bonusOption: nil
-).validate()
+extension Rune {
 
-public let sixStarVitalEpicFlatSubstatVitalPercent = Rune(
-    statType: .vital, valueType: .flat, value: 1344,
-    bonusOption: Rune.BonusOption(statType: .vital, valueType: .percent, value: 0.08)
-).validate()
+    public static let sixStarVitalEpic = Rune(
+        statType: .vital, valueType: .percent, value: 0.5136, bonusOption: nil
+    ).validate()
 
-public let fiveStarAssaultLegendFlat = Rune(
-    statType: .assault, valueType: .flat, value: 321, bonusOption: nil
-).validate()
+    public static let sixStarVitalEpicFlatSubstatVitalPercent = Rune(
+        statType: .vital, valueType: .flat, value: 1344,
+        bonusOption: Rune.BonusOption(statType: .vital, valueType: .percent, value: 0.08)
+    ).validate()
 
-public let fiveStarAssaultEpicFlatSubstatVitalPercent = Rune(
-    statType: .assault, valueType: .percent, value: 0.4036,
-    bonusOption: Rune.BonusOption(statType: .vital, valueType: .flat, value: 192)
-).validate()
+    public static let fiveStarAssaultLegendFlat = Rune(
+        statType: .assault, valueType: .flat, value: 321, bonusOption: nil
+    ).validate()
 
-public let fiveStarShieldLegendSubstatFatal = Rune(
-    statType: .shield, valueType: .percent, value: 0.2962,
-    bonusOption: Rune.BonusOption(statType: .fatal, valueType: .percent, value: 0.064)
-).validate()
+    public static let fiveStarAssaultEpicFlatSubstatVitalPercent = Rune(
+        statType: .assault, valueType: .percent, value: 0.4036,
+        bonusOption: Rune.BonusOption(statType: .vital, valueType: .flat, value: 192)
+    ).validate()
+
+    public static let fiveStarShieldLegendSubstatFatal = Rune(
+        statType: .shield, valueType: .percent, value: 0.2962,
+        bonusOption: Rune.BonusOption(statType: .fatal, valueType: .percent, value: 0.064)
+    ).validate()
+
+}

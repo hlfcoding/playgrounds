@@ -43,7 +43,7 @@ struct Unit {
 
 let levia = Unit(
     baseAttack: 669, baseDefense: 0, baseHP: 4444,
-    runes: [sixStarVitalEpic, sixStarVitalEpicFlatSubstatVitalPercent],
+    runes: [.sixStarVitalEpic, .sixStarVitalEpicFlatSubstatVitalPercent],
     soulGearBuffs: nil
 )
 
@@ -52,7 +52,7 @@ assert(levia.hp == 9223)
 
 let scarlet = Unit(
     baseAttack: 738, baseDefense: 0.05, baseHP: 3115,
-    runes: [fiveStarAssaultLegendFlat, fiveStarAssaultEpicFlatSubstatVitalPercent],
+    runes: [.fiveStarAssaultLegendFlat, .fiveStarAssaultEpicFlatSubstatVitalPercent],
     soulGearBuffs: .maxedWarrior
 )
 
@@ -61,7 +61,7 @@ assert(scarlet.hp == 3638)
 
 let angelica = Unit(
     baseAttack: 1975, baseDefense: 0.1, baseHP: 4285,
-    runes: [fiveStarShieldLegendSubstatFatal],
+    runes: [.fiveStarShieldLegendSubstatFatal],
     soulGearBuffs: .maxedWarrior
 )
 
