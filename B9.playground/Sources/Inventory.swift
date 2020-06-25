@@ -2,6 +2,10 @@ import Foundation
 
 extension Rune {
 
+    public static let sixStarFatalLegend = Rune(
+        statType: .fatal, valueType: .percent, value: 0.5206, bonusOption: nil
+    ).validate()
+
     public static let sixStarVitalEpic = Rune(
         statType: .vital, valueType: .percent, value: 0.5136, bonusOption: nil
     ).validate()
