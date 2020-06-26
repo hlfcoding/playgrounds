@@ -17,7 +17,10 @@ struct Unit {
             (Double(newBaseValue ?? baseAttack) * (soulGearBuffs?.attack ?? 0.0)).rounded()
         )
         return baseAttack + valueToAdd
-
+    }
+    var critDamage: Double {
+        let valueToAdd = Rune.valueToAdd(from: runes, of: .rage, to: baseCritDamage)
+        return baseCritDamage + valueToAdd
     }
     var critRate: Double {
         let valueToAdd = Rune.valueToAdd(from: runes, of: .fatal, to: baseCritRate)
@@ -35,6 +38,10 @@ struct Unit {
             (Double(newBaseValue ?? baseHP) * (soulGearBuffs?.hp ?? 0.0)).rounded()
         )
         return baseHP + valueToAdd
+    }
+
+    var normalAttack: Int {
+        return Int(Double(attack) * (1 + (critRate * critDamage)).rounded())
     }
 
     struct SoulGearBuffs {
@@ -75,6 +82,8 @@ assert(angelica.attack == 2173)
 assert(angelica.critRate == 0.8346)
 assert(angelica.defense == 0.3962)
 assert(angelica.hp == 4714)
+
+print(angelica.normalAttack)
 
 struct Round {
 
