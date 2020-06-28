@@ -52,6 +52,20 @@ struct Unit {
     }
     var soulGearBuffs: SoulGearBuffs?
 
+    func validate(
+        attack: Int? = nil, critDamage: Double? = nil, critRate: Double? = nil,
+        defense: Double? = nil, hp: Int? = nil,
+        normalAttack: Int? = nil
+    ) -> Unit {
+        if let attack = attack { assert(self.attack == attack) }
+        if let critDamage = critDamage { assert(self.critDamage == critDamage) }
+        if let critRate = critRate { assert(self.critRate == critRate) }
+        if let defense = defense { assert(self.defense == defense) }
+        if let hp = hp { assert(self.hp == hp) }
+        if let normalAttack = normalAttack { assert(self.normalAttack == normalAttack) }
+        return self
+    }
+
 }
 
 extension Unit {
@@ -60,32 +74,21 @@ extension Unit {
         baseAttack: 1975, baseCritDamage: 1, baseCritRate: 0.25, baseDefense: 0.1, baseHP: 4285,
         runes: [.sixStarFatalLegend, .fiveStarShieldLegendSubstatFatal],
         soulGearBuffs: .maxedWarrior
-    )
+    ).validate(attack: 2173, critRate: 0.8346, defense: 0.3962, hp: 4714, normalAttack: 4346)
 
     static let levia = Unit(
         baseAttack: 669, baseCritDamage: 0.5, baseCritRate: 0.2, baseDefense: 0, baseHP: 4444,
         runes: [.sixStarVitalEpic, .sixStarVitalEpicFlatSubstatVitalPercent],
         soulGearBuffs: nil
-    )
+    ).validate(attack: 669, hp: 9223)
 
     static let scarlet = Unit(
         baseAttack: 738, baseCritDamage: 0.75, baseCritRate: 0.35, baseDefense: 0.05, baseHP: 3115,
         runes: [.fiveStarAssaultLegendFlat, .fiveStarAssaultEpicFlatSubstatVitalPercent],
         soulGearBuffs: .maxedWarrior
-    )
+    ).validate(attack: 1592, hp: 3638)
 
 }
-
-assert(Unit.levia.attack == 669)
-assert(Unit.levia.hp == 9223)
-
-assert(Unit.scarlet.attack == 1592)
-assert(Unit.scarlet.hp == 3638)
-
-assert(Unit.angelica.attack == 2173)
-assert(Unit.angelica.critRate == 0.8346)
-assert(Unit.angelica.defense == 0.3962)
-assert(Unit.angelica.hp == 4714)
 
 var subject = Unit.angelica
 print(Unit.angelica.normalAttack)
