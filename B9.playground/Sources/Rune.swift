@@ -1,9 +1,13 @@
 import Foundation
 
+/// A rune-like object can buff a unit's stat.
 protocol RuneLike {
 
+    /// The main type that determines the stat.
     var statType: Rune.StatType { get set }
+    /// The secondary type, possibly limited by the main type.
     var valueType: Rune.ValueType { get set }
+    /// The value of the buff.
     var value: Double { get set }
 
 }
@@ -26,6 +30,8 @@ public struct Rune: RuneLike {
 
     var value: Double
 
+    /// Runes can (optionally) have a bonus option, which buffs a unit's stat like a rune.
+    /// However both statType and valueType cannot be the same as the rune, though this isn't validated.
     public struct BonusOption: RuneLike {
         var statType: StatType
         var valueType: ValueType
@@ -33,11 +39,13 @@ public struct Rune: RuneLike {
     }
     let bonusOption: BonusOption?
 
+    /// Chain after initialization to test assumptions.
     public func validate() -> Rune {
         assert(statType.supports(valueType: valueType))
         return self
     }
 
+    /// Calculates the buff to add for a stat-type that supports both value-types.
     public static func valueToAdd(
         from allRunes: [Rune], of statType: StatType, to baseValue: Int
     ) -> (value: Int, newBaseValue: Int?) {
@@ -50,6 +58,7 @@ public struct Rune: RuneLike {
         return (Int(value), newBaseValue)
     }
 
+    /// Calculates the buff to add for a stat-type that supports only percent value-type.
     public static func valueToAdd(
         from allRunes: [Rune], of statType: StatType, to baseValue: Double
     ) -> Double {
