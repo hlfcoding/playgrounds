@@ -37,7 +37,9 @@ public struct Rune: RuneLike {
         var valueType: ValueType
         var value: Double
     }
-    let bonusOption: BonusOption?
+    var bonusOption: BonusOption? = nil
+
+    var split: RuneLike? = nil
 
     /// Chain after initialization to test assumptions.
     public func validate() -> Rune {
@@ -72,6 +74,7 @@ public struct Rune: RuneLike {
         var runeLikes = [RuneLike]()
         runeLikes += allRunes.filter { $0.statType == statType } as [RuneLike]
         runeLikes += allRunes.compactMap { $0.bonusOption }.filter { $0.statType == statType } as [RuneLike]
+        runeLikes += allRunes.compactMap { $0.split }.filter { $0.statType == statType }
         return runeLikes
     }
 
