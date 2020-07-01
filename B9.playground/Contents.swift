@@ -7,7 +7,7 @@ struct Unit {
     let baseCritRate: Double
     let baseDefense: Double
     let baseHP: Int
-    let runes: [Rune]
+    var runes: [Rune]
 
     var attack: Int {
         var (valueToAdd, newBaseValue) = Rune.valueToAdd(
@@ -41,7 +41,9 @@ struct Unit {
     }
 
     var normalAttack: Int {
-        return Int(Double(attack) * (1 + (critRate * critDamage)).rounded())
+        let critRoll = Double.random(in: 0...1)
+        let critRollDamage = (critRoll <= critRate) ? critDamage : 0
+        return Int(Double(attack) * (1 + critRollDamage).rounded())
     }
 
     struct SoulGearBuffs {
@@ -55,14 +57,14 @@ struct Unit {
     func validate(
         attack: Int? = nil, critDamage: Double? = nil, critRate: Double? = nil,
         defense: Double? = nil, hp: Int? = nil,
-        normalAttack: Int? = nil
+        normalAttack: ClosedRange<Int>? = nil
     ) -> Unit {
         if let attack = attack { assert(self.attack == attack) }
         if let critDamage = critDamage { assert(self.critDamage == critDamage) }
         if let critRate = critRate { assert(self.critRate == critRate) }
         if let defense = defense { assert(self.defense == defense) }
         if let hp = hp { assert(self.hp == hp) }
-        if let normalAttack = normalAttack { assert(self.normalAttack == normalAttack) }
+        if let range = normalAttack { assert(range.contains(self.normalAttack)) }
         return self
     }
 
@@ -74,7 +76,9 @@ extension Unit {
         baseAttack: 1975, baseCritDamage: 1, baseCritRate: 0.25, baseDefense: 0.1, baseHP: 4285,
         runes: [.sixStarFatalLegend, .fiveStarShieldLegendSubstatFatal],
         soulGearBuffs: .maxedWarrior
-    ).validate(attack: 2173, critRate: 0.8346, defense: 0.3962, hp: 4714, normalAttack: 4346)
+    ).validate(
+        attack: 2173, critRate: 0.8346, defense: 0.3962, hp: 4714, normalAttack: 2173...4346
+    )
 
     static let levia = Unit(
         baseAttack: 669, baseCritDamage: 0.5, baseCritRate: 0.2, baseDefense: 0, baseHP: 4444,
@@ -91,7 +95,8 @@ extension Unit {
 }
 
 var subject = Unit.angelica
-print(Unit.angelica.normalAttack)
+subject.runes[0] = .sixStarRageLegend
+print(subject.normalAttack)
 
 struct Round {
 

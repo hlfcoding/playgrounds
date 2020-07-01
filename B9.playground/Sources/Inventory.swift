@@ -6,6 +6,10 @@ extension Rune {
         statType: .fatal, valueType: .percent, value: 0.5206, bonusOption: nil, split: nil
     ).validate()
 
+    public static let sixStarRageLegend = Rune(
+        statType: .rage, valueType: .percent, value: 1.354, bonusOption: nil, split: nil
+    ).validate()
+
     public static let sixStarVitalEpic = Rune(
         statType: .vital, valueType: .percent, value: 0.5136, bonusOption: nil, split: nil
     ).validate()
