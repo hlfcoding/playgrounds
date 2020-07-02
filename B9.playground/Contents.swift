@@ -8,6 +8,7 @@ struct Unit {
     let baseDefense: Double
     let baseHP: Int
     var runes: [Rune]
+    let skills: [Skill]
 
     var attack: Int {
         var (valueToAdd, newBaseValue) = Rune.valueToAdd(
@@ -75,6 +76,7 @@ extension Unit {
     static let angelica = Unit(
         baseAttack: 1975, baseCritDamage: 1, baseCritRate: 0.25, baseDefense: 0.1, baseHP: 4285,
         runes: [.sixStarFatalLegend, .fiveStarShieldLegendSubstatFatal],
+        skills: [.permanentDebuffImmunity],
         soulGearBuffs: .maxedWarrior
     ).validate(
         attack: 2173, critRate: 0.8346, defense: 0.3962, hp: 4714, normalAttack: 2173...4346
@@ -83,12 +85,14 @@ extension Unit {
     static let levia = Unit(
         baseAttack: 669, baseCritDamage: 0.5, baseCritRate: 0.2, baseDefense: 0, baseHP: 4444,
         runes: [.sixStarVitalEpic, .sixStarVitalEpicFlatSubstatVitalPercent],
+        skills: [],
         soulGearBuffs: nil
     ).validate(attack: 669, hp: 9223)
 
     static let scarlet = Unit(
         baseAttack: 738, baseCritDamage: 0.75, baseCritRate: 0.35, baseDefense: 0.05, baseHP: 3115,
         runes: [.fiveStarAssaultLegendFlat, .fiveStarAssaultEpicFlatSubstatVitalPercent],
+        skills: [],
         soulGearBuffs: .maxedWarrior
     ).validate(attack: 1592, hp: 3638)
 
@@ -97,6 +101,45 @@ extension Unit {
 var subject = Unit.angelica
 subject.runes[0] = .sixStarRageLegend
 print(subject.normalAttack)
+
+enum SkillType {
+    case immunity
+}
+
+struct Skill {
+
+    enum ApplyTarget {
+        case myself
+        case unit(Unit)
+    }
+    let applyTarget: ApplyTarget
+
+    enum ApplyTime {
+        case start
+        case turn(Int)
+    }
+    let applyTime: ApplyTime
+
+    enum Duration {
+        case permanent
+        case turns(Int)
+    }
+    let duration: Duration
+
+    let skillType: SkillType
+
+    let subSkills: [Skill]
+
+}
+
+extension Skill {
+
+    static let permanentDebuffImmunity = Skill(
+        applyTarget: .myself, applyTime: .start, duration: .permanent, skillType: .immunity,
+        subSkills: []
+    )
+
+}
 
 struct Round {
 
