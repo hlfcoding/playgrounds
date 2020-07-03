@@ -78,10 +78,12 @@ struct Unit {
     }
     var state: State
 
-    mutating func applySkills() {
-        skills.forEach {
-            state.currentBuffs.append($0.buffGenerator())
-        }
+    mutating func applyBuff(_ buff: Buff) {
+        guard !state.currentDebuffs.contains(where: {
+            guard $0.debuffType == .prohibition else { return false }
+            return true
+        }) else { return }
+        state.currentBuffs.append(buff)
     }
 
     mutating func applyDebuff(_ debuff: Debuff) {
@@ -92,6 +94,12 @@ struct Unit {
             return true
         }) else { return }
         state.currentDebuffs.append(debuff)
+    }
+
+    mutating func useSkills() {
+        skills.forEach {
+            applyBuff($0.buffGenerator())
+        }
     }
 
 }
@@ -129,7 +137,7 @@ extension Unit {
 var subject = Unit.angelica
 subject.runes[0] = .sixStarRageLegend
 print(subject.normalAttack)
-subject.applySkills()
+subject.useSkills()
 assert(subject.state.currentBuffs.count == 1)
 subject.applyDebuff(Debuff(debuffType: .statsWeakening))
 assert(subject.state.currentDebuffs.isEmpty)
@@ -188,6 +196,7 @@ struct Buff {
 }
 
 enum DebuffType {
+    case prohibition
     case statsWeakening
     case all
 }
