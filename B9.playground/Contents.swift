@@ -69,6 +69,31 @@ struct Unit {
         return self
     }
 
+    // MARK: -
+
+    struct State {
+        var currentBuffs: [Buff]
+        var currentDebuffs: [Debuff]
+        static let initial = State(currentBuffs: [], currentDebuffs: [])
+    }
+    var state: State
+
+    mutating func applySkills() {
+        skills.forEach {
+            state.currentBuffs.append($0.buffGenerator())
+        }
+    }
+
+    mutating func applyDebuff(_ debuff: Debuff) {
+        guard !state.currentBuffs.contains(where: {
+            guard case let .immunity(debuffType) = $0.buffType,
+                debuffType == .all || debuffType == debuff.debuffType
+                else { return false }
+            return true
+        }) else { return }
+        state.currentDebuffs.append(debuff)
+    }
+
 }
 
 extension Unit {
@@ -77,7 +102,8 @@ extension Unit {
         baseAttack: 1975, baseCritDamage: 1, baseCritRate: 0.25, baseDefense: 0.1, baseHP: 4285,
         runes: [.sixStarFatalLegend, .fiveStarShieldLegendSubstatFatal],
         skills: [.permanentDebuffImmunity],
-        soulGearBuffs: .maxedWarrior
+        soulGearBuffs: .maxedWarrior,
+        state: .initial
     ).validate(
         attack: 2173, critRate: 0.8346, defense: 0.3962, hp: 4714, normalAttack: 2173...4346
     )
@@ -86,14 +112,16 @@ extension Unit {
         baseAttack: 669, baseCritDamage: 0.5, baseCritRate: 0.2, baseDefense: 0, baseHP: 4444,
         runes: [.sixStarVitalEpic, .sixStarVitalEpicFlatSubstatVitalPercent],
         skills: [],
-        soulGearBuffs: nil
+        soulGearBuffs: nil,
+        state: .initial
     ).validate(attack: 669, hp: 9223)
 
     static let scarlet = Unit(
         baseAttack: 738, baseCritDamage: 0.75, baseCritRate: 0.35, baseDefense: 0.05, baseHP: 3115,
         runes: [.fiveStarAssaultLegendFlat, .fiveStarAssaultEpicFlatSubstatVitalPercent],
         skills: [],
-        soulGearBuffs: .maxedWarrior
+        soulGearBuffs: .maxedWarrior,
+        state: .initial
     ).validate(attack: 1592, hp: 3638)
 
 }
@@ -101,6 +129,10 @@ extension Unit {
 var subject = Unit.angelica
 subject.runes[0] = .sixStarRageLegend
 print(subject.normalAttack)
+subject.applySkills()
+assert(subject.state.currentBuffs.count == 1)
+subject.applyDebuff(Debuff(debuffType: .statsWeakening))
+assert(subject.state.currentDebuffs.isEmpty)
 
 enum SkillType {
     case immunity
@@ -130,6 +162,8 @@ struct Skill {
 
     let subSkills: [Skill]
 
+    let buffGenerator: () -> Buff
+
 }
 
 extension Skill {
@@ -137,7 +171,30 @@ extension Skill {
     static let permanentDebuffImmunity = Skill(
         applyTarget: .myself, applyTime: .start, duration: .permanent, skillType: .immunity,
         subSkills: []
-    )
+    ) {
+        Buff(buffType: .immunity(.all))
+    }
+
+}
+
+enum BuffType {
+    case immunity(DebuffType)
+}
+
+struct Buff {
+
+    let buffType: BuffType
+
+}
+
+enum DebuffType {
+    case statsWeakening
+    case all
+}
+
+struct Debuff {
+
+    let debuffType: DebuffType
 
 }
 
