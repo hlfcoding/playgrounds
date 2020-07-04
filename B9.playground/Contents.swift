@@ -55,7 +55,7 @@ struct Unit {
     }
     var soulGearBuffs: SoulGearBuffs?
 
-    func validate(
+    @discardableResult func validate(
         attack: Int? = nil, critDamage: Double? = nil, critRate: Double? = nil,
         defense: Double? = nil, hp: Int? = nil,
         normalAttack: ClosedRange<Int>? = nil
@@ -71,34 +71,46 @@ struct Unit {
 
     // MARK: -
 
+    var currentBuffs: [Buff] { return state.buffs }
+    var currentDebuffs: [Debuff] { return state.debuffs }
+
     struct State {
-        var currentBuffs: [Buff]
-        var currentDebuffs: [Debuff]
-        static let initial = State(currentBuffs: [], currentDebuffs: [])
+        var buffs: [Buff]
+        var debuffs: [Debuff]
+        var hp: Int
+        static let initial = State(buffs: [], debuffs: [], hp: 0)
     }
     var state: State
 
     mutating func applyBuff(_ buff: Buff) {
-        guard !state.currentDebuffs.contains(where: {
+        guard !currentDebuffs.contains(where: {
             guard $0.debuffType == .prohibition else { return false }
             return true
         }) else { return }
-        state.currentBuffs.append(buff)
+        state.buffs.append(buff)
     }
 
     mutating func applyDebuff(_ debuff: Debuff) {
-        guard !state.currentBuffs.contains(where: {
+        guard !currentBuffs.contains(where: {
             guard case let .immunity(debuffType) = $0.buffType,
                 debuffType == .all || debuffType == debuff.debuffType
                 else { return false }
             return true
         }) else { return }
-        state.currentDebuffs.append(debuff)
+        state.debuffs.append(debuff)
     }
 
-    mutating func useSkills() {
-        skills.forEach {
-            applyBuff($0.buffGenerator())
+    mutating func startState() {
+        state.hp = hp
+        useSkills(skills.filter {
+            guard case .start = $0.applyTime else { return false }
+            return true
+        })
+    }
+
+    mutating func useSkills(_ skills: [Skill]) {
+        skills.flatMap { $0.buffsGenerator() }.forEach {
+            applyBuff($0)
         }
     }
 
@@ -136,11 +148,11 @@ extension Unit {
 
 var subject = Unit.angelica
 subject.runes[0] = .sixStarRageLegend
-print(subject.normalAttack)
-subject.useSkills()
-assert(subject.state.currentBuffs.count == 1)
+subject.validate(normalAttack: 2173...6519)
+subject.startState()
 subject.applyDebuff(Debuff(debuffType: .statsWeakening))
-assert(subject.state.currentDebuffs.isEmpty)
+assert(subject.currentBuffs.count == 1)
+assert(subject.currentDebuffs.isEmpty)
 
 enum SkillType {
     case immunity
@@ -170,7 +182,7 @@ struct Skill {
 
     let subSkills: [Skill]
 
-    let buffGenerator: () -> Buff
+    let buffsGenerator: () -> [Buff]
 
 }
 
@@ -179,9 +191,9 @@ extension Skill {
     static let permanentDebuffImmunity = Skill(
         applyTarget: .myself, applyTime: .start, duration: .permanent, skillType: .immunity,
         subSkills: []
-    ) {
-        Buff(buffType: .immunity(.all))
-    }
+    ) {[
+        Buff(buffType: .immunity(.all), value: nil)
+    ]}
 
 }
 
@@ -192,6 +204,7 @@ enum BuffType {
 struct Buff {
 
     let buffType: BuffType
+    let value: Double?
 
 }
 
