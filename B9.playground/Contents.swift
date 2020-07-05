@@ -58,7 +58,9 @@ struct Unit {
     @discardableResult func validate(
         attack: Int? = nil, critDamage: Double? = nil, critRate: Double? = nil,
         defense: Double? = nil, hp: Int? = nil,
-        normalAttack: ClosedRange<Int>? = nil
+        normalAttack: ClosedRange<Int>? = nil,
+        // -
+        currentHP: Int? = nil
     ) -> Unit {
         if let attack = attack { assert(self.attack == attack) }
         if let critDamage = critDamage { assert(self.critDamage == critDamage) }
@@ -66,13 +68,21 @@ struct Unit {
         if let defense = defense { assert(self.defense == defense) }
         if let hp = hp { assert(self.hp == hp) }
         if let range = normalAttack { assert(range.contains(self.normalAttack)) }
+        if let currentHP = currentHP { assert(self.currentHP == currentHP) }
         return self
     }
 
     // MARK: -
 
     var currentBuffs: [Buff] { return state.buffs }
+    var currentDamageReduction: Double {
+        return currentBuffs.reduce(0.0) {
+            guard case .damageReduction = $1.buffType, let value = $1.value else { return $0 }
+            return $0 + value
+        }
+    }
     var currentDebuffs: [Debuff] { return state.debuffs }
+    var currentHP: Int { return state.hp }
 
     struct State {
         var buffs: [Buff]
@@ -88,6 +98,13 @@ struct Unit {
             return true
         }) else { return }
         state.buffs.append(buff)
+    }
+
+    @discardableResult mutating func applyDamage(_ damage: Int) -> Int {
+        var finalDamage = Double(damage)
+        finalDamage -= (finalDamage * currentDamageReduction).rounded()
+        state.hp -= Int(finalDamage)
+        return Int(finalDamage)
     }
 
     mutating func applyDebuff(_ debuff: Debuff) {
@@ -131,7 +148,7 @@ extension Unit {
     static let levia = Unit(
         baseAttack: 669, baseCritDamage: 0.5, baseCritRate: 0.2, baseDefense: 0, baseHP: 4444,
         runes: [.sixStarVitalEpic, .sixStarVitalEpicFlatSubstatVitalPercent],
-        skills: [],
+        skills: [.permanentAdvancedDebuffImmunity],
         soulGearBuffs: nil,
         state: .initial
     ).validate(attack: 669, hp: 9223)
@@ -153,6 +170,11 @@ subject.startState()
 subject.applyDebuff(Debuff(debuffType: .statsWeakening))
 assert(subject.currentBuffs.count == 1)
 assert(subject.currentDebuffs.isEmpty)
+
+subject = Unit.levia
+subject.startState()
+assert(subject.applyDamage(1000) == 300)
+subject.validate(currentHP: 8923)
 
 enum SkillType {
     case immunity
@@ -188,6 +210,14 @@ struct Skill {
 
 extension Skill {
 
+    static let permanentAdvancedDebuffImmunity = Skill(
+        applyTarget: .myself, applyTime: .start, duration: .permanent, skillType: .immunity,
+        subSkills: []
+    ) {[
+        Buff(buffType: .immunity(.all), value: nil),
+        Buff(buffType: .damageReduction, value: 0.7)
+    ]}
+
     static let permanentDebuffImmunity = Skill(
         applyTarget: .myself, applyTime: .start, duration: .permanent, skillType: .immunity,
         subSkills: []
@@ -198,6 +228,7 @@ extension Skill {
 }
 
 enum BuffType {
+    case damageReduction
     case immunity(DebuffType)
 }
 
